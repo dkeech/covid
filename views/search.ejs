@@ -1,0 +1,104 @@
+<%- include("partials/header") %>
+
+<div class="row">
+    <div class="col s12 m6">
+        <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+                <span class="card-title">Enter Country</span>
+                <form action="/country" method="GET">
+                    <input type="text" id="country" placeholder="Country" name="country">
+                    <input id="text-btn" class="btn disabled" type="submit">
+                    
+                </form>
+                <div ><ul class="suggestions"></ul></div>
+            </div>
+        </div>
+    </div>
+
+<div class="col s12 m6">
+    <div class="card blue-grey darken-1">
+        <div class="card-content ">
+            <span class="card-title">
+                <form action="/country" method="GET">
+                    <label class="white-text">Select Country</label>
+                    <select class="browser-default" style="margin-bottom: 15px;" name="country">
+                      <option class="countryList" value="USA" selected>USA</option>
+                      <% data.forEach(function(country){ %>
+                          <option class="countryList"  value="<%= country['name'] %>"><%= country["name"] %></option>
+                          <% }) %> 
+                    </select>
+                  <input class="btn" type="submit">
+                  </form>
+            </span>
+       
+        </div>
+    </div>
+</div>
+
+<div class="col s12 m6">
+    <div class="card blue-grey darken-1">
+        <div class="card-content ">
+            <span class="card-title">
+                <form action="/state" method="GET">
+                    <label class="white-text">Select US State</label>
+                    <select class="browser-default" style="margin-bottom: 15px;" name="state">
+                      
+                      <% states.forEach(state => { %>
+                          <option class="stateList"  value="<%= state %>"><%= state %></option>
+                          <% }) %> 
+                    </select>
+                  <input class="btn" type="submit">
+                  </form>
+            </span>
+       
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div id="countryNames" style="display: none;"><%= countryNames %></div>
+ 
+<script>
+    
+    var countries = document.getElementById('countryNames').textContent.split(',');
+
+    function findMatches(wordToMatch, countries) {
+        return countries.filter(place => {
+            // match to search text
+            const regex = new RegExp(wordToMatch, 'gi');
+            return place.match(regex)
+        })
+    }
+
+    function displayMatches(){
+        const textBtn = document.getElementById('text-btn');
+        const matchArray = findMatches(this.value, countries);
+        const included = countries.findIndex(item => this.value.toLowerCase() === item.toLowerCase());
+        console.log(this.value);
+        console.log(included);
+        if(matchArray.length === 1 && included != -1) {
+            textBtn.classList.remove('disabled');
+        } else {
+            textBtn.classList.add('disabled');
+        }
+        const html = matchArray.map(place => {
+           return `<li>${place}</li>`;
+        }).join('');
+        
+        suggestions.innerHTML = html;
+    }
+
+    const searchInput = document.querySelector('#country');
+    const suggestions = document.querySelector('.suggestions');
+
+    searchInput.addEventListener('change', displayMatches);
+    searchInput.addEventListener('keyup', displayMatches);
+
+
+    var worldData;
+
+
+   
+</script>
+<%- include("partials/footer") %>
